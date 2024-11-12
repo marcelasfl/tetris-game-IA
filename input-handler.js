@@ -31,5 +31,29 @@ export default class InputHandler {
                 while (GameManager.arena.currentPiece.tryMoveDown());
                 break;
         } 
+
+        switch(e.code) {
+            case "ArrowLeft":
+                GameManager.arena.currentPiece.tryMoveLeft();
+                break;
+        }
+
+        switch(e.code) {
+            case "ArrowRight":
+                GameManager.arena.currentPiece.tryMoveRight();
+                break;
+        }
+
+        switch(e.code) {
+            case "ArrowDown":
+                GameManager.arena.currentPiece.tryMoveDown();
+                break;
+        }
+
+        switch(e.code) {
+            case "ArrowUp":
+                GameManager.arena.currentPiece.tryRotateClockWise();
+                break;
+        }
     }
 }

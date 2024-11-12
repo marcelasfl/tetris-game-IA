@@ -29,4 +29,6 @@ export default class GameManager{
 
         requestAnimationFrame(GameManager._draw);
     }
+
+    
 }

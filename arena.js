@@ -48,6 +48,7 @@ export default class Arena {
         this._drawSquares()
         this._drawGrid();
         this.currentPiece.draw();
+
     }
 
     _drawBorder() {
@@ -120,6 +121,10 @@ export default class Arena {
         }
     
         return completedLines.length;
+    }
+
+    endLine() {
+        
     }
     
 
