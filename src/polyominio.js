@@ -24,8 +24,8 @@ export default class Polyomino {
     draw() {
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
-                if (this._squares[j][i]) {
-                    this._squares[j][i].draw(
+                if (this._squares[i][j]) {
+                    this._squares[i][j].draw(
                     GameManager.arena.position.left + (this.position.x + i) * GameManager.config.squareSize,
                     GameManager.arena.position.top + (this.position.y + j) * GameManager.config.squareSize,
                     );   
@@ -59,11 +59,80 @@ export default class Polyomino {
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 if (this._squares[i][j]){
-                    GameManager.arena.setSquare(i,j, square);
+                    GameManager.arena.setSquare(this.position.x + i, this.position.y + j, this._squares[i][j]);
                 }
             }
         }
     }
+
+
+    tryRotateClockWise() {
+        let copy = this.clone();
+        // copy.position.x--;
+
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                copy._squares[i][j] = this._squares[this._squaresCount - j - 1][i];
+                }
+                
+            }
+        
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
+                    return false;
+                }
+                
+            }
+        }
+
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                this._squares[i][j] = copy._squares[i][j];
+            }
+        }
+        return true;
+    }
+
+
+    tryMoveLeft() {
+        let copy = this.clone();
+        copy.position.x--;
+
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
+                    return false;
+                }
+                
+            }
+        }
+
+        this.position.x--;
+
+        return true;
+    }
+
+    tryMoveRight() {
+        let copy = this.clone();
+        copy.position.x++;
+
+        for (let i = 0; i < this._squaresCount; i++) {
+            for (let j = 0; j < this._squaresCount; j++) {
+                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
+                    return false;
+                }
+                
+            }
+        }
+
+        this.position.x++;
+
+        return true;
+    }
+
+    
+
 
     tryMoveDown() {
         let copy = this.clone();
@@ -71,9 +140,10 @@ export default class Polyomino {
 
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
-                if (this._squares[j][i] && (copy.position.y +j) >= 20) {
+                if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
+                
             }
         }
 
@@ -81,6 +151,4 @@ export default class Polyomino {
 
         return true;
     }
-
-
 }

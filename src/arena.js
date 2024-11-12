@@ -20,8 +20,27 @@ export default class Arena {
 
     _currentPieceFall() {
         if (!GameManager.arena.currentPiece.tryMoveDown()){
+            GameManager.arena.currentPiece.mergeToArena();
+            GameManager.arena.removeCompletedLines();
             GameManager.arena.currentPiece = new TetrominoFactory().getTetromino().setPosition(1, 3);
         }
+    }
+
+    isOutsideBoundaries(i, j, piece) {
+        return (piece.position.y + j) >= this._lines
+        || (piece.position.x + i) >= this._columns
+        || (piece.position.x + i) < 0;
+
+
+
+    }
+
+    conflicts(i, j, piece) {
+        return this._squares[piece.position.x + i][piece.position.y + j];
+    }
+
+    setSquare(i,j, square) {
+        this._squares[i][j] = square;
     }
 
     draw() {
@@ -71,5 +90,37 @@ export default class Arena {
         GameManager.context.stroke();
     }
 
+
+    removeCompletedLines() {
+        let completedLines = [];
+    
+        for (let j = 0; j < this._lines; j++) {
+            let completed = true;
+    
+            for (let i = 0; i < this._columns; i++) {
+                if (!this._squares[i][j]) {
+                    completed = false;
+                    break;
+                }
+            }
+            if (completed) {
+                completedLines.push(j);
+            }
+        }
+    
+        if (completedLines.length === 0) {
+            return 0;
+        }
+    
+        for (let i = 0; i < completedLines.length; i++) {
+            for (let j = 0; j < this._columns; j++) {
+                this._squares[j].splice(completedLines[i], 1);
+                this._squares[j].unshift(null); 
+            }
+        }
+    
+        return completedLines.length;
+    }
+    
 
 }
