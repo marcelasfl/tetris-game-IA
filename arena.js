@@ -1,5 +1,6 @@
 import GameManager from './game-manager.js';
-import TetrominoFactory from './tetromino-factory.js';
+
+
 
 export default class Arena {
     constructor() {
@@ -12,19 +13,61 @@ export default class Arena {
             left: (GameManager.config.width - this._width) / 2
 
         }
+        
         this._squares = [...Array(this._columns)].map(() => [...Array(this._lines)]);
 
-        this.currentPiece = new TetrominoFactory().getTetromino().setPosition(1, 3);
+        this.currentPiece = GameManager.tetrominoFactory.getTetromino().setPosition(1, 1);
+        this.endLinePosition = { x: 1, y: 1 };
         this._currentPieceFallInterval = setInterval(this._currentPieceFall, 1000);
     }
 
-    _currentPieceFall() {
-        if (!GameManager.arena.currentPiece.tryMoveDown()){
-            GameManager.arena.currentPiece.mergeToArena();
-            GameManager.arena.removeCompletedLines();
-            GameManager.arena.currentPiece = new TetrominoFactory().getTetromino().setPosition(1, 3);
+    checkGameOver() {
+        console.log(this._squares)
+
+        return this._squares.some(x => {
+            return x[1] !== undefined && x[1] !== null
+        })
+
+    }
+
+    endGame() {
+        // Pausa o jogo
+        clearInterval(this._currentPieceFallInterval);
+        const userChoice = confirm('Fim de jogo! Deseja jogar novamente?');
+    
+        if (userChoice) {
+            this.restartGame();
+        } else {
+            console.log('Jogo encerrado.');
         }
     }
+    
+    restartGame() {
+        this._squares = [...Array(this._columns)].map(() => [...Array(this._lines)]);
+        this.currentPiece = GameManager.tetrominoFactory.getTetromino().setPosition(1, 1);
+        
+        this._currentPieceFallInterval = setInterval(this._currentPieceFall, 1000);
+    
+        this.draw();
+    }
+
+
+    _currentPieceFall() {
+        if (!GameManager.arena.currentPiece.tryMoveDown()) {
+            GameManager.arena.currentPiece.mergeToArena();
+            
+            if (GameManager.arena.checkGameOver()) {
+                GameManager.arena.endGame(); 
+                clearInterval(this._currentPieceFallInterval); 
+ 
+            }
+            
+            GameManager.arena.removeCompletedLines();
+            GameManager.arena.currentPiece = GameManager.nextPieceQueue.pop().setPosition(1, 1);
+        }
+    }
+
+    
 
     isOutsideBoundaries(i, j, piece) {
         return (piece.position.y + j) >= this._lines
@@ -123,9 +166,6 @@ export default class Arena {
         return completedLines.length;
     }
 
-    endLine() {
-        
-    }
     
 
 }

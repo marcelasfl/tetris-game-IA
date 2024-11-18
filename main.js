@@ -5,7 +5,8 @@ import GameManager from "./game-manager.js";
         height: 540,
         columns: 10,
         lines: 20,
-        squareSize: 25
+        squareSize: 25,
+        nextPieceQueueSize: 2
     };
 
 GameManager.start(config);

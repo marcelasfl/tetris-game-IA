@@ -66,89 +66,88 @@ export default class Polyomino {
     }
 
 
-    tryRotateClockWise() {
-        let copy = this.clone();
-        // copy.position.x--;
 
+    tryRotateClockWise() {
+        let copy = this.clone();        
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 copy._squares[i][j] = this._squares[this._squaresCount - j - 1][i];
-                }
-                
             }
-        
+        }
+    
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
-                
             }
         }
-
+    
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 this._squares[i][j] = copy._squares[i][j];
             }
         }
+    
+    
         return true;
     }
-
+    
 
     tryMoveLeft() {
         let copy = this.clone();
         copy.position.x--;
-
+    
+        // Verifica as colisões após o movimento
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
-                
             }
         }
-
+    
         this.position.x--;
-
+    
+    
         return true;
     }
-
+    
     tryMoveRight() {
         let copy = this.clone();
         copy.position.x++;
-
+    
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
-                
             }
         }
-
+    
         this.position.x++;
-
+    
+    
         return true;
     }
-
     
-
-
     tryMoveDown() {
         let copy = this.clone();
         copy.position.y++;
-
+    
+        // Verifica as colisões após o movimento
         for (let i = 0; i < this._squaresCount; i++) {
             for (let j = 0; j < this._squaresCount; j++) {
                 if (this._squares[i][j] && (GameManager.arena.isOutsideBoundaries(i, j, copy) || GameManager.arena.conflicts(i, j, copy))) {
                     return false;
                 }
-                
             }
         }
-
+    
         this.position.y++;
-
+    
+    
         return true;
     }
+    
 }

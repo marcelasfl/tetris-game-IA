@@ -1,5 +1,7 @@
 import Arena from "./arena.js";
 import InputHandler from "./input-handler.js";
+import NextPieceQueue from "./next-piece-queue.js";
+import TetrominoFactory from "./tetromino-factory.js";
 
 export default class GameManager{
    static start (config) {
@@ -13,6 +15,8 @@ export default class GameManager{
         canvas.height = GameManager.config.height;
 
         GameManager.context = canvas.getContext("2d");
+        GameManager.tetrominoFactory = new TetrominoFactory();
+        GameManager.nextPieceQueue = new NextPieceQueue(GameManager.config.nextPieceQueueSize);
         GameManager.arena = new Arena();
         GameManager.inputHandler = new InputHandler();
         
@@ -26,6 +30,8 @@ export default class GameManager{
         GameManager.context.clearRect(0, 0, GameManager.config.width, GameManager.config.height);
 
         GameManager.arena.draw();
+        GameManager.nextPieceQueue.draw();
+
 
         requestAnimationFrame(GameManager._draw);
     }
