@@ -28,7 +28,11 @@ export default class InputHandler {
                 GameManager.arena.currentPiece.tryMoveRight();
                 break;
             case "Space":
-                while (GameManager.arena.currentPiece.tryMoveDown());
+                let dropHeight = 0;
+                while (GameManager.arena.currentPiece.tryMoveDown()); {
+                    dropHeight++;
+                }
+                GameManager.score.addDropBonus(dropHeight);
                 break;
         } 
 

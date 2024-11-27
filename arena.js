@@ -19,6 +19,9 @@ export default class Arena {
         this.currentPiece = GameManager.tetrominoFactory.getTetromino().setPosition(1, 1);
         this.endLinePosition = { x: 1, y: 1 };
         this._currentPieceFallInterval = setInterval(this._currentPieceFall, 1000);
+
+        this.score = 0;
+
     }
 
     checkGameOver() {
@@ -91,6 +94,7 @@ export default class Arena {
         this._drawSquares()
         this._drawGrid();
         this.currentPiece.draw();
+        this._drawScore();
 
     }
 
@@ -102,6 +106,13 @@ export default class Arena {
             this._width,
             this._height
         );
+    }
+
+    _drawScore() {
+        GameManager.context.font = '20px Arial';
+        GameManager.context.fillStyle = '#000';
+        GameManager.context.clearRect(10, 10, 200, 30); 
+        GameManager.context.fillText(`Score: ${this.score}`, 10, 30);
     }
 
     _drawSquares() {
@@ -134,13 +145,12 @@ export default class Arena {
         GameManager.context.stroke();
     }
 
-
     removeCompletedLines() {
         let completedLines = [];
-    
+        
         for (let j = 0; j < this._lines; j++) {
             let completed = true;
-    
+        
             for (let i = 0; i < this._columns; i++) {
                 if (!this._squares[i][j]) {
                     completed = false;
@@ -156,14 +166,49 @@ export default class Arena {
             return 0;
         }
     
-        for (let i = 0; i < completedLines.length; i++) {
-            for (let j = 0; j < this._columns; j++) {
-                this._squares[j].splice(completedLines[i], 1);
-                this._squares[j].unshift(null); 
+        const animationDuration = 500; 
+        const startTime = Date.now();
+    
+        const animate = () => {
+            const elapsedTime = Date.now() - startTime;
+            const progress = elapsedTime / animationDuration;
+    
+            if (progress > 1) {
+                for (let i = 0; i < completedLines.length; i++) {
+                    for (let j = 0; j < this._columns; j++) {
+                        this._squares[j].splice(completedLines[i], 1);
+                        this._squares[j].unshift(null);
+                    }
+                }
+    
+                this.updateScore(completedLines.length);
+                this.draw();
+                return;
             }
-        }
+    
+            GameManager.context.fillStyle = `rgba(255, 255, 0, ${0.5 + 0.5 * Math.sin(progress * Math.PI)})`;
+            for (const line of completedLines) {
+                GameManager.context.fillRect(
+                    this.position.left,
+                    this.position.top + line * GameManager.config.squareSize,
+                    this._width,
+                    GameManager.config.squareSize
+                );
+            }
+    
+            requestAnimationFrame(animate);
+        };
+    
+        animate();
     
         return completedLines.length;
+    }
+    
+
+    updateScore(linesRemoved) {
+        const pointsPerLine = [0, 100, 300, 500, 800];
+        this.score += pointsPerLine[linesRemoved] || 0;
+        this.draw(); 
     }
 
     

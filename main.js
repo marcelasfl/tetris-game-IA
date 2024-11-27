@@ -6,7 +6,10 @@ import GameManager from "./game-manager.js";
         columns: 10,
         lines: 20,
         squareSize: 25,
-        nextPieceQueueSize: 2
+        nextPieceQueueSize: 2,
+        initialPiecefallInMilliseconds: 1000,
+        piecefallIntervalDecay: 0.9
+
     };
 
 GameManager.start(config);
